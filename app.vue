@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <NuxtPage />
+    <UContainer>
+      <NuxtPage />
+    </UContainer>
+    <UNotifications />
   </div>
 </template>
 

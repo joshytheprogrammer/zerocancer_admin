@@ -26,6 +26,7 @@ import {
 
 const router = useRouter()
 const auth = useFirebaseAuth();
+const toast = useToast()
 
 let loading = ref(false)
 const user = reactive({
@@ -57,6 +58,7 @@ function onSubmit() {
 
   signInWithEmailAndPassword(auth, user.email, user.password)
   .then(() => {
+    toast.add({ title: 'Authentication successful' })
     router.push('/')
   })
   .catch((error) => {
