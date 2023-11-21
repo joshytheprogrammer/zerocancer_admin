@@ -5,7 +5,12 @@
       <p class="text-center py-2">This page is under development!!!</p>
       <NuxtLink to="/create/">
         <UButton block>
-          Create
+          Create Location
+        </UButton>
+      </NuxtLink>
+      <NuxtLink to="/view/">
+        <UButton block>
+          View Locations
         </UButton>
       </NuxtLink>
     </UContainer>

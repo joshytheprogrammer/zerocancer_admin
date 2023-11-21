@@ -7,7 +7,7 @@
     </UContainer>
     <UTabs :items="items" class="w-full">
       <template #item="{ item }">
-        <UCard @submit.prevent="callSubmit(item.key)">
+        <UCard>
           <template #header>
             <p class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
               {{ item.label }}
@@ -17,25 +17,33 @@
             </p>
           </template>
 
-          <div v-if="item.key === 'state'" class="space-y-3">
+          <UForm v-if="item.key === 'state'" :state="state" :validate="validateState" @submit="submitState" class="space-y-3">
             <UFormGroup label="Name" name="name">
               <UInput v-model="state.name" />
             </UFormGroup>
             <UFormGroup label="Regions" name="regions">
               <USelectMenu v-model="state.regions" searchable searchable-placeholder="Search regions..." :options="exisitingRegions" multiple placeholder="Select regions" value-attribute="id" option-attribute="name"/>
             </UFormGroup>
-          </div>
+            
+            <UButton :loading="loading" type="submit" color="black">
+              {{ loading ? 'Please wait...' : 'Add State' }}
+            </UButton>
+          </UForm>
 
-          <div v-if="item.key === 'region'" class="space-y-3">
+          <UForm v-if="item.key === 'region'" :state="region" :validate="validateRegion" @submit="submitRegion" class="space-y-3">
             <UFormGroup label="Name" name="name">
               <UInput v-model="region.name" />
             </UFormGroup>
             <UFormGroup label="Centres" name="centres">
               <USelectMenu v-model="region.centres" searchable searchable-placeholder="Search centres..."  :options="exisitingCentres" multiple placeholder="Select centres" value-attribute="id" option-attribute="name"/>
             </UFormGroup>
-          </div>
+            
+            <UButton :loading="loading" type="submit" color="black">
+              {{ loading ? 'Please wait...' : 'Add Region' }}
+            </UButton>
+          </UForm>
 
-          <div v-if="item.key === 'centre'" class="space-y-3">
+          <UForm v-if="item.key === 'centre'" :state="centre" :validate="validateCentre" @submit="submitCentre" class="space-y-3">
             <UFormGroup label="Name" name="name">
               <UInput v-model="centre.name" />
             </UFormGroup>
@@ -57,13 +65,11 @@
             <UFormGroup label="Link to Google Form" name="formLink">
               <UInput v-model="centre.formLink" />
             </UFormGroup>
-          </div>
-
-          <template #footer>
+            
             <UButton :loading="loading" type="submit" color="black">
-              {{ loading ? 'Please wait...' : 'Add '+ item.label }}
+              {{ loading ? 'Please wait...' : 'Add Centre' }}
             </UButton>
-          </template>
+          </UForm>
         </UCard>
       </template>
     </UTabs>
@@ -75,6 +81,10 @@ definePageMeta({
   middleware: ['auth'],
 });
 
+import { collection, getDocs,doc, setDoc } from 'firebase/firestore'
+import { uuid } from 'vue-uuid';
+
+const db = useFirestore()
 const toast = useToast();
 
 const items = [ 
@@ -115,30 +125,179 @@ const centre = reactive({
   address: undefined,
 });
 
-const exisitingRegions = ref([]); // Request the Regions array from firebase
-const exisitingCentres = ref([]); // Request the Regions array from firebase
+const exisitingRegions = ref([]);
+const exisitingCentres = ref([]); 
+
+fetchItems();
 
 let loading = ref(false);
 
-function submitState() {
+async function submitState() {
   loading.value = true;
-  console.log(state)
+  
+  const stateID = generateID(state);
+
+  await setDoc(doc(db, "locations", "states", 'state', stateID), state)
+  .then(() => {
+    clearObjectValues(state)
+    toast.add({ title: 'State created successfully' })
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    console.error({code: errorCode, message: errorMessage})
+    toast.add({ title: 'An error occurred!!!' })
+  }).finally(() => {
+    fetchItems();
+    loading.value = false;
+  });
 }
 
-function submitRegion() {
+async function submitRegion() {
   loading.value = true;
-  console.log(region)
+  
+  const regionID = generateID(region);
+
+  await setDoc(doc(db, "locations", "regions", 'region', regionID), region)
+  .then(() => {
+    clearObjectValues(region)
+    toast.add({ title: 'Region created successfully' })
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    console.error({code: errorCode, message: errorMessage})
+    toast.add({ title: 'An error occurred!!!' })
+  }).finally(() => {
+    fetchItems();
+    loading.value = false;
+  });
 }
 
-function submitCentre() {
+async function submitCentre() {
   loading.value = true;
-  console.log(centre)
+  
+  const centreID = generateID(centre);
+
+  await setDoc(doc(db, "locations", "centres", 'centre', centreID), centre)
+  .then(() => {
+    clearObjectValues(centre)
+    toast.add({ title: 'Centre created successfully' })
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    console.error({code: errorCode, message: errorMessage})
+    toast.add({ title: 'An error occurred!!!' })
+  }).finally(() => {
+    fetchItems();
+    loading.value = false;
+  });
 }
 
-function callSubmit(key) {
-  if(key === 'state'){submitState()}
-  else if(key === 'region'){submitRegion()}
-  else if(key === 'centre'){submitCentre()}
+function validateState() {
+  const errors = [];
+
+  function validateProperty(property, path) {
+    if (!property || (typeof property === 'string' && property.trim() === '')) {
+      errors.push({ path, message: 'Required' });
+    } else if (Array.isArray(property)) {
+      property.forEach((item, index) => {
+        const itemPath = `${path}[${index}]`;
+        validateProperty(item, itemPath);
+      });
+    } else if (typeof property === 'object') {
+      for (const key in property) {
+        if (property.hasOwnProperty(key)) {
+          const nestedPath = path ? `${path}.${key}` : key;
+          validateProperty(property[key], nestedPath);
+        }
+      }
+    }
+  }
+
+  for (const key in state) {
+    if (state.hasOwnProperty(key)) {
+      const propertyPath = key;
+      validateProperty(state[key], propertyPath);
+    }
+  }
+
+  return errors;
+}
+
+function validateRegion() {
+  const errors = [];
+
+  function validateProperty(property, path) {
+    if (!property || (typeof property === 'string' && property.trim() === '')) {
+      errors.push({ path, message: 'Required' });
+    } else if (Array.isArray(property)) {
+      property.forEach((item, index) => {
+        const itemPath = `${path}[${index}]`;
+        validateProperty(item, itemPath);
+      });
+    } else if (typeof property === 'object') {
+      for (const key in property) {
+        if (property.hasOwnProperty(key)) {
+          const nestedPath = path ? `${path}.${key}` : key;
+          validateProperty(property[key], nestedPath);
+        }
+      }
+    }
+  }
+
+  for (const key in region) {
+    if (region.hasOwnProperty(key)) {
+      const propertyPath = key;
+      validateProperty(region[key], propertyPath);
+    }
+  }
+
+  return errors;
+}
+
+function validateCentre() {
+  const errors = [];
+
+  for (const key in centre) {
+    if (centre.hasOwnProperty(key)) {
+      if (!centre[key] || centre[key].trim() === '') {
+        errors.push({path: key, message: 'Required'});
+      }
+    }
+  }
+
+  return errors;
+}
+
+async function fetchItems() {
+  await getDocs(collection(db, 'locations', 'regions', 'region')).then((items) => {
+    items.forEach((doc) => {
+      exisitingRegions.value.push({ id: doc.id, name: doc.data().name });
+    });
+  });
+
+  await getDocs(collection(db, 'locations', 'centres', 'centre')).then((items) => {
+    items.forEach((doc) => {
+      exisitingCentres.value.push({ id: doc.id, name: doc.data().name });
+    });
+  });
+}
+
+function generateID(item) {
+  return item.name?.toLowerCase().replace(/\s/g, "-") + "-" + uuid.v4().slice(0, 8)
+}
+
+function clearObjectValues(obj) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      obj[key] = '';
+    }
+  }
 }
 </script>
 

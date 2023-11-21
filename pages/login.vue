@@ -2,7 +2,8 @@
   <div class="block my-8 mx-auto py-4 max-w-lg shadow-lg rounded-lg">
     <UContainer>
       <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
-      <UForm :state="user" class="space-y-4" :validate="validate" @submit="onSubmit">
+      <p class="text-center" v-if="checkingAuthentication">Authenticating...</p>
+      <UForm v-else="!checkingAuthentication" :state="user" class="space-y-4" :validate="validate" @submit="onSubmit">
         <UFormGroup label="Email" name="email">
           <UInput v-model="user.email" />
         </UFormGroup>
@@ -24,11 +25,19 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth'
 
-const router = useRouter()
+const router = useRouter();
 const auth = useFirebaseAuth();
-const toast = useToast()
+const toast = useToast();
 
-let loading = ref(false)
+let loading = ref(false);
+let checkingAuthentication = ref(true);
+
+onMounted(() => {
+  setTimeout(() => {
+    checkingAuthentication.value = false
+  }, 20000);
+});
+
 const user = reactive({
   email: undefined,
   password: undefined
@@ -53,10 +62,10 @@ function validate(user) {
   return errors
 }
 
-function onSubmit() {
+async function onSubmit() {
   loading.value = true;
 
-  signInWithEmailAndPassword(auth, user.email, user.password)
+  await signInWithEmailAndPassword(auth, user.email, user.password)
   .then(() => {
     toast.add({ title: 'Authentication successful' })
     router.push('/')
