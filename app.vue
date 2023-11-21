@@ -1,6 +1,21 @@
 <template>
-  <div id="app">
+  <div id="app ">
     <UContainer>
+      <ClientOnly>
+        <div class="flex justify-center my-4">
+          <UButton
+            :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
+            color="gray"
+            variant="ghost"
+            aria-label="Theme"
+            @click="isDark = !isDark"
+          />
+        </div>
+
+        <template #fallback>
+          <div class="w-8 h-8" />
+        </template>
+      </ClientOnly>
       <NuxtPage />
     </UContainer>
     <UNotifications />
@@ -11,6 +26,17 @@
 const router = useRouter()
 const route = useRoute()
 const user = useCurrentUser()
+
+const colorMode = useColorMode()
+
+const isDark = computed({
+  get () {
+    return colorMode.value === 'dark'
+  },
+  set () {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+  }
+})
 
 onMounted(() => {
   watch(user, (user, prevUser) => {
