@@ -13,16 +13,14 @@
     </UTable>
 
     <USlideover v-model="isEditOpen">
-      <UCard>
-        <div class="flex items-center justify-between">
-          <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-            Editing - {{ editing.name }}
-          </h3>
-          <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isEditOpen = false" />
-        </div>
-      </UCard>
+      <div class="px-4 py-8 border-b border-b-gray-500 flex items-center justify-between">
+        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+          Editing - {{ editing.name }}
+        </h3>
+        <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isEditOpen = false" />
+      </div>
       <div class="p-4 ">
-        <EditCentre :id="editing.id" />
+        <EditCentre @close="toggleEdit" :id="editing.id" />
       </div>
     </USlideover>
   </div>
@@ -48,10 +46,10 @@ const items = (row) => [
       icon: 'i-heroicons-pencil-square-20-solid',
       click: () => toggleEdit(row.id, row.name)
     },
-    { 
-      label: 'Delete',
-      icon: 'i-heroicons-trash-20-solid'
-    }
+    // { 
+    //   label: 'Delete',
+    //   icon: 'i-heroicons-trash-20-solid'
+    // }
   ]
 ]
 
@@ -87,17 +85,21 @@ const filteredRows = computed(() => {
   })
 });
 
-function toggleEdit(id, name) {
+async function toggleEdit(id, name) {
   isEditOpen.value = !isEditOpen.value
   editing = {id: id, name: name}
+  if(!isEditOpen.value){await fetchCentre();}
 }
 
 async function fetchCentre() {
+  const newCentres = []
   loading.value = true
   const centresSnapshot = await getDocs(collection(db, 'locations', 'centres', 'centre'));
     centresSnapshot.forEach((doc) => {
-      centres.value.push({ id: doc.id, ...doc.data() });
+      newCentres.push({ id: doc.id, ...doc.data() });
   });
+
+  centres.value = newCentres;
   loading.value = false
 }
 

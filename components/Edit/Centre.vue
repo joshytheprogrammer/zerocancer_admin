@@ -1,6 +1,7 @@
 <template>
   <div>
-    <UForm :state="centre" :validate="validateCentre" @submit="submitCentre" class="space-y-3">
+    <p v-if="loading">Please wait...</p>
+    <UForm v-else :state="centre" :validate="validateCentre" @submit="submitCentre" class="space-y-3">
       <UFormGroup label="Name" name="name">
         <UInput v-model="centre.name" />
       </UFormGroup>
@@ -23,8 +24,8 @@
         <UInput v-model="centre.formLink" />
       </UFormGroup>
       
-      <UButton :loading="loading" type="submit" color="black">
-        {{ loading ? 'Please wait...' : 'Update Centre' }}
+      <UButton type="submit" color="black">
+        Update Centre
       </UButton>
     </UForm>
   </div>
@@ -32,21 +33,41 @@
 
 <script setup>
 const props  = defineProps(['id']);
-import { doc, getDoc } from 'firebase/firestore'
+const emit = defineEmits(['close']);
+
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 const db = useFirestore();
 let centre = reactive({})
 let loading = ref(false)
+const toast = useToast();
 
-loading.value = true
-await getDoc(doc(db, 'locations', 'centres', 'centre', props.id)).then((doc) => {
-  centre = {id: doc.id, ...doc.data()};
-}).finally(() => {
-  loading.value = false
-});
+onMounted(async () => {
+  loading.value = true
+  await getDoc(doc(db, 'locations', 'centres', 'centre', props.id)).then((doc) => {
+    centre = {id: doc.id, ...doc.data()};
+  }).finally(() => {
+    loading.value = false
+  });
+})
 
-function submitCentre() {
+async function submitCentre() {
+  loading.value = true;
 
+  await setDoc(doc(db, "locations", "centres", 'centre', centre.id), centre)
+  .then(() => {
+    toast.add({ title: 'Centre updated successfully' })
+    emit('close')
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    console.error({code: errorCode, message: errorMessage})
+    toast.add({ title: 'An error occurred!!!' })
+  }).finally(() => {
+    loading.value = false;
+  });
 }
 
 function validateCentre() {
