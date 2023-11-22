@@ -8,7 +8,7 @@
           Create Location
         </UButton>
       </NuxtLink>
-      <NuxtLink to="/view/">
+      <NuxtLink class="block my-4" to="/view/">
         <UButton block>
           View Locations
         </UButton>

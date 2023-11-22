@@ -54,7 +54,7 @@
               <UInput v-model="centre.phone" />
             </UFormGroup>
             <UFormGroup label="Services" name="services">
-              <USelectMenu v-model="centre.services" :options="['Screening only', 'Treatment', 'Screening, Diagnosis and Treatment', ]" />
+              <USelectMenu v-model="centre.services" :options="['Screening only', 'Treatment', 'Screening + Diagnosis and Treatment', ]" />
             </UFormGroup>
             <UFormGroup label="Address" name="address">
               <UInput v-model="centre.address" />
@@ -86,6 +86,7 @@ import { uuid } from 'vue-uuid';
 
 const db = useFirestore()
 const toast = useToast();
+fetchItems();
 
 const items = [ 
   {
@@ -127,8 +128,6 @@ const centre = reactive({
 
 const exisitingRegions = ref([]);
 const exisitingCentres = ref([]); 
-
-fetchItems();
 
 let loading = ref(false);
 
@@ -275,17 +274,22 @@ function validateCentre() {
 }
 
 async function fetchItems() {
-  await getDocs(collection(db, 'locations', 'regions', 'region')).then((items) => {
-    items.forEach((doc) => {
-      exisitingRegions.value.push({ id: doc.id, name: doc.data().name });
-    });
+  const newExisitingRegions = [];
+  const newExisitingCentres = [];
+
+  const regionsSnapshot = await getDocs(collection(db, 'locations', 'regions', 'region'));
+  regionsSnapshot.forEach((doc) => {
+    newExisitingRegions.push({ id: doc.id, name: doc.data().name });
   });
 
-  await getDocs(collection(db, 'locations', 'centres', 'centre')).then((items) => {
-    items.forEach((doc) => {
-      exisitingCentres.value.push({ id: doc.id, name: doc.data().name });
-    });
+  const centresSnapshot = await getDocs(collection(db, 'locations', 'centres', 'centre'));
+  centresSnapshot.forEach((doc) => {
+    newExisitingCentres.push({ id: doc.id, name: doc.data().name });
   });
+
+  // Replace the entire array
+  exisitingRegions.value = newExisitingRegions;
+  exisitingCentres.value = newExisitingCentres;
 }
 
 function generateID(item) {
