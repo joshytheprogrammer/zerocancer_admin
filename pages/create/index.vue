@@ -21,18 +21,10 @@
             <CreateState />
           </div>
 
-          <UForm v-if="item.key === 'region'" :state="region" :validate="validateRegion" @submit="submitRegion" class="space-y-3">
-            <UFormGroup label="Name" name="name">
-              <UInput v-model="region.name" />
-            </UFormGroup>
-            <UFormGroup label="Centres" name="centres">
-              <USelectMenu v-model="region.centres" searchable searchable-placeholder="Search centres..."  :options="exisitingCentres" multiple placeholder="Select centres" value-attribute="id" option-attribute="name"/>
-            </UFormGroup>
-            
-            <UButton :loading="loading" type="submit" color="black">
-              {{ loading ? 'Please wait...' : 'Add Region' }}
-            </UButton>
-          </UForm>
+          <div v-if="item.key === 'region'">
+            <CreateRegion />
+          </div>
+
 
           <UForm v-if="item.key === 'centre'" :state="centre" :validate="validateCentre" @submit="submitCentre" class="space-y-3">
             <UFormGroup label="Name" name="name">

@@ -1,14 +1,14 @@
 <template>
-  <UForm :state="state" :validate="validateState" @submit="submitState" class="space-y-3">
+  <UForm :state="region" :validate="validateRegion" @submit="submitRegion" class="space-y-3">
     <UFormGroup label="Name" name="name">
-      <UInput v-model="state.name" />
+      <UInput v-model="region.name" />
     </UFormGroup>
-    <UFormGroup label="Regions" name="regions">
-      <USelectMenu v-model="state.regions" searchable searchable-placeholder="Search regions..." :options="exisitingRegions" multiple placeholder="Select regions" value-attribute="id" option-attribute="name"/>
+    <UFormGroup label="Centres" name="centres">
+      <USelectMenu v-model="region.centres" searchable searchable-placeholder="Search centres..."  :options="exisitingCentres" multiple placeholder="Select centres" value-attribute="id" option-attribute="name"/>
     </UFormGroup>
     
     <UButton :loading="loading" type="submit" color="black">
-      {{ loading ? 'Please wait...' : 'Add State' }}
+      {{ loading ? 'Please wait...' : 'Add Region' }}
     </UButton>
   </UForm>
 </template>
@@ -19,26 +19,26 @@ import { uuid } from 'vue-uuid';
 
 const db = useFirestore();
 const toast = useToast();
-fetchRegions()
+fetchCentres();
 
-const state = reactive({
+const region = reactive({
   name: undefined,
-  regions: []
+  centres: []
 });
 
-const exisitingRegions = ref([]);
+const exisitingCentres = ref([]); 
 
 let loading = ref(false);
 
-async function submitState() {
+async function submitRegion() {
   loading.value = true;
   
-  const stateID = generateID(state);
+  const regionID = generateID(region);
 
-  await setDoc(doc(db, "locations", "states", 'state', stateID), state)
+  await setDoc(doc(db, "locations", "regions", 'region', regionID), region)
   .then(() => {
-    clearObjectValues(state)
-    toast.add({ title: 'State created successfully' })
+    clearObjectValues(region)
+    toast.add({ title: 'Region created successfully' })
   })
   .catch((error) => {
     const errorCode = error.code;
@@ -47,12 +47,12 @@ async function submitState() {
     console.error({code: errorCode, message: errorMessage})
     toast.add({ title: 'An error occurred!!!' })
   }).finally(() => {
-    fetchRegions();
+    fetchCentres();
     loading.value = false;
   });
 }
 
-function validateState() {
+function validateRegion() {
   const errors = [];
 
   function validateProperty(property, path) {
@@ -73,25 +73,25 @@ function validateState() {
     }
   }
 
-  for (const key in state) {
-    if (state.hasOwnProperty(key)) {
+  for (const key in region) {
+    if (region.hasOwnProperty(key)) {
       const propertyPath = key;
-      validateProperty(state[key], propertyPath);
+      validateProperty(region[key], propertyPath);
     }
   }
 
   return errors;
 }
 
-async function fetchRegions() {
-  const newExisitingRegions = [];
+async function fetchCentres() {
+  const newExisitingCentres = [];
 
-  const regionsSnapshot = await getDocs(collection(db, 'locations', 'regions', 'region'));
-  regionsSnapshot.forEach((doc) => {
-    newExisitingRegions.push({ id: doc.id, name: doc.data().name });
+  const centresSnapshot = await getDocs(collection(db, 'locations', 'centres', 'centre'));
+  centresSnapshot.forEach((doc) => {
+    newExisitingCentres.push({ id: doc.id, name: doc.data().name });
   });
-
-  exisitingRegions.value = newExisitingRegions;
+  
+  exisitingCentres.value = newExisitingCentres;
 }
 
 function generateID(item) {
