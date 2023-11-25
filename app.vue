@@ -1,6 +1,6 @@
 <template>
   <div id="app ">
-    <UContainer>
+    <UContainer class="min-h-screen">
       <ClientOnly>
         <div class="flex justify-center my-4">
           <UButton
@@ -19,6 +19,7 @@
       <NuxtPage />
     </UContainer>
     <UNotifications />
+    <AppFooter />
   </div>
 </template>
 

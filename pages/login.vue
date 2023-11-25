@@ -1,5 +1,5 @@
 <template>
-  <div class="block my-8 mx-auto py-4 max-w-lg shadow-lg rounded-lg">
+  <div class="block my-8 mx-auto py-4 max-w-lg">
     <UContainer>
       <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
       <p class="text-center" v-if="checkingAuthentication">
