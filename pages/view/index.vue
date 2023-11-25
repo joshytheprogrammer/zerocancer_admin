@@ -22,7 +22,7 @@
           </div>
 
           <div v-if="item.key === 'region'" class="space-y-3">
-            
+            <ViewRegions />
           </div>
 
           <div v-if="item.key === 'centre'" class="space-y-3">
