@@ -1,7 +1,7 @@
 <template>
   <div class="mx-auto my-8">
     <UContainer>
-      <NuxtLink to="/">
+      <NuxtLink class="mx-auto w-fit block" to="/">
         <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
       </NuxtLink>
     </UContainer>
