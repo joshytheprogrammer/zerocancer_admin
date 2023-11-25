@@ -10,6 +10,10 @@
           <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
         </UDropdown>
       </template>
+      <template #centres-data="{ row }">
+        <UBadge class="m-0.5" v-for="item in row.centres" color="white" variant="solid">{{reverseEngineerID(item)}}</UBadge>
+        <!-- {{ row.centres }} -->
+      </template>
     </UTable>
 
     <USlideover v-model="isEditOpen">
@@ -92,6 +96,16 @@ async function fetchRegions() {
 
   regions.value = newRegions;
   loading.value = false
+}
+
+function reverseEngineerID(generatedID) {
+  // Extract the name part by removing the UUID part and splitting by hyphens
+  const namePart = generatedID.replace(/-[\da-f]+$/, "").split("-");
+
+  // Capitalize each word in the name part
+  const formattedName = namePart.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+
+  return formattedName;
 }
 
 </script>
