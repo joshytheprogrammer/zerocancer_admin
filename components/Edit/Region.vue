@@ -1,7 +1,7 @@
 <template>
   <div>
     <p v-if="loading">Please wait...</p>
-    <UForm v-else :state="region" :validate="validateRegion" @submit="submitRegion" class="space-y-3">
+    <UForm v-else :state="region" :validate="vItem" @submit="submitRegion" class="space-y-3">
       <UFormGroup label="Name" name="name">
         <UInput v-model="region.name" />
       </UFormGroup>
@@ -23,6 +23,7 @@ const emit = defineEmits(['close']);
 import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore'
 
 const db = useFirestore();
+const {validate} = useCreateUtilities();
 let region = reactive({})
 let loading = ref(false);
 const toast = useToast();
@@ -70,35 +71,7 @@ async function fetchExisitngCentres() {
   exisitingCentres.value = newExisitingCentres;
 }
 
-
-function validateRegion() {
-  const errors = [];
-
-  function validateProperty(property, path) {
-    if (!property || (typeof property === 'string' && property.trim() === '')) {
-      errors.push({ path, message: 'Required' });
-    } else if (Array.isArray(property)) {
-      property.forEach((item, index) => {
-        const itemPath = `${path}[${index}]`;
-        validateProperty(item, itemPath);
-      });
-    } else if (typeof property === 'object') {
-      for (const key in property) {
-        if (property.hasOwnProperty(key)) {
-          const nestedPath = path ? `${path}.${key}` : key;
-          validateProperty(property[key], nestedPath);
-        }
-      }
-    }
-  }
-
-  for (const key in region) {
-    if (region.hasOwnProperty(key)) {
-      const propertyPath = key;
-      validateProperty(region[key], propertyPath);
-    }
-  }
-
-  return errors;
+function vItem() {
+  return validate(region)
 }
 </script>

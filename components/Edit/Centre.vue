@@ -1,7 +1,7 @@
 <template>
   <div>
     <p v-if="loading">Please wait...</p>
-    <UForm v-else :state="centre" :validate="validateCentre" @submit="submitCentre" class="space-y-3">
+    <UForm v-else :state="centre" :validate="vItem" @submit="submitCentre" class="space-y-3">
       <UFormGroup label="Name" name="name">
         <UInput v-model="centre.name" />
       </UFormGroup>
@@ -38,6 +38,7 @@ const emit = defineEmits(['close']);
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 const db = useFirestore();
+const {validate} = useCreateUtilities();
 let centre = reactive({})
 let loading = ref(false)
 const toast = useToast();
@@ -70,19 +71,10 @@ async function submitCentre() {
   });
 }
 
-function validateCentre() {
-  const errors = [];
-
-  for (const key in centre) {
-    if (centre.hasOwnProperty(key)) {
-      if (!centre[key] || centre[key].trim() === '') {
-        errors.push({path: key, message: 'Required'});
-      }
-    }
-  }
-
-  return errors;
+function vItem() {
+  return validate(centre)
 }
+
 </script>
 
 <style lang="scss" scoped>
