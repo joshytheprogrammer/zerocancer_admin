@@ -1,5 +1,5 @@
 <template>
-  <UForm :state="state" :validate="validateState" @submit="submitState" class="space-y-3">
+  <UForm :state="state" :validate="vItem" @submit="submitState" class="space-y-3">
     <UFormGroup label="Name" name="name">
       <UInput v-model="state.name" />
     </UFormGroup>
@@ -15,10 +15,10 @@
 
 <script setup>
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore'
-import { uuid } from 'vue-uuid';
 
 const db = useFirestore();
 const toast = useToast();
+const {generateID, clearObjectValues, validate} = useCreateUtilities();
 fetchRegions()
 
 const state = reactive({
@@ -52,37 +52,6 @@ async function submitState() {
   });
 }
 
-function validateState() {
-  const errors = [];
-
-  function validateProperty(property, path) {
-    if (!property || (typeof property === 'string' && property.trim() === '')) {
-      errors.push({ path, message: 'Required' });
-    } else if (Array.isArray(property)) {
-      property.forEach((item, index) => {
-        const itemPath = `${path}[${index}]`;
-        validateProperty(item, itemPath);
-      });
-    } else if (typeof property === 'object') {
-      for (const key in property) {
-        if (property.hasOwnProperty(key)) {
-          const nestedPath = path ? `${path}.${key}` : key;
-          validateProperty(property[key], nestedPath);
-        }
-      }
-    }
-  }
-
-  for (const key in state) {
-    if (state.hasOwnProperty(key)) {
-      const propertyPath = key;
-      validateProperty(state[key], propertyPath);
-    }
-  }
-
-  return errors;
-}
-
 async function fetchRegions() {
   const newExisitingRegions = [];
 
@@ -94,15 +63,7 @@ async function fetchRegions() {
   exisitingRegions.value = newExisitingRegions;
 }
 
-function generateID(item) {
-  return item.name?.toLowerCase().replace(/\s/g, "-") + "-" + uuid.v4().slice(0, 8)
-}
-
-function clearObjectValues(obj) {
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      obj[key] = '';
-    }
-  }
+function vItem() {
+  return validate(state)
 }
 </script>

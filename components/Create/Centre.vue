@@ -1,5 +1,5 @@
 <template>
-  <UForm :state="centre" :validate="validateCentre" @submit="submitCentre" class="space-y-3">
+  <UForm :state="centre" :validate="vItem" @submit="submitCentre" class="space-y-3">
     <UFormGroup label="Name" name="name">
       <UInput v-model="centre.name" />
     </UFormGroup>
@@ -29,11 +29,11 @@
 </template>
 
 <script setup>
-import { collection, getDocs, doc, setDoc } from 'firebase/firestore'
-import { uuid } from 'vue-uuid';
+import { doc, setDoc } from 'firebase/firestore'
 
 const db = useFirestore();
 const toast = useToast();
+const {generateID, clearObjectValues, validate} = useCreateUtilities();
 
 const centre = reactive({
   name: undefined,
@@ -68,30 +68,8 @@ async function submitCentre() {
   });
 }
 
-function validateCentre() {
-  const errors = [];
-
-  for (const key in centre) {
-    if (centre.hasOwnProperty(key)) {
-      if (!centre[key] || centre[key].trim() === '') {
-        errors.push({path: key, message: 'Required'});
-      }
-    }
-  }
-
-  return errors;
-}
-
-function generateID(item) {
-  return item.name?.toLowerCase().replace(/\s/g, "-") + "-" + uuid.v4().slice(0, 8)
-}
-
-function clearObjectValues(obj) {
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      obj[key] = '';
-    }
-  }
+function vItem() {
+  return validate(centre)
 }
 
 </script>

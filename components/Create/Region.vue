@@ -1,5 +1,5 @@
 <template>
-  <UForm :state="region" :validate="validateRegion" @submit="submitRegion" class="space-y-3">
+  <UForm :state="region" :validate="vItem" @submit="submitRegion" class="space-y-3">
     <UFormGroup label="Name" name="name">
       <UInput v-model="region.name" />
     </UFormGroup>
@@ -15,10 +15,10 @@
 
 <script setup>
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore'
-import { uuid } from 'vue-uuid';
 
 const db = useFirestore();
 const toast = useToast();
+const {generateID, clearObjectValues, validate} = useCreateUtilities();
 fetchCentres();
 
 const region = reactive({
@@ -52,37 +52,6 @@ async function submitRegion() {
   });
 }
 
-function validateRegion() {
-  const errors = [];
-
-  function validateProperty(property, path) {
-    if (!property || (typeof property === 'string' && property.trim() === '')) {
-      errors.push({ path, message: 'Required' });
-    } else if (Array.isArray(property)) {
-      property.forEach((item, index) => {
-        const itemPath = `${path}[${index}]`;
-        validateProperty(item, itemPath);
-      });
-    } else if (typeof property === 'object') {
-      for (const key in property) {
-        if (property.hasOwnProperty(key)) {
-          const nestedPath = path ? `${path}.${key}` : key;
-          validateProperty(property[key], nestedPath);
-        }
-      }
-    }
-  }
-
-  for (const key in region) {
-    if (region.hasOwnProperty(key)) {
-      const propertyPath = key;
-      validateProperty(region[key], propertyPath);
-    }
-  }
-
-  return errors;
-}
-
 async function fetchCentres() {
   const newExisitingCentres = [];
 
@@ -94,15 +63,9 @@ async function fetchCentres() {
   exisitingCentres.value = newExisitingCentres;
 }
 
-function generateID(item) {
-  return item.name?.toLowerCase().replace(/\s/g, "-") + "-" + uuid.v4().slice(0, 8)
+function vItem() {
+  return validate(region)
 }
 
-function clearObjectValues(obj) {
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      obj[key] = '';
-    }
-  }
-}
+
 </script>
