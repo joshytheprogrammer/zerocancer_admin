@@ -17,18 +17,9 @@
             </p>
           </template>
 
-          <UForm v-if="item.key === 'state'" :state="state" :validate="validateState" @submit="submitState" class="space-y-3">
-            <UFormGroup label="Name" name="name">
-              <UInput v-model="state.name" />
-            </UFormGroup>
-            <UFormGroup label="Regions" name="regions">
-              <USelectMenu v-model="state.regions" searchable searchable-placeholder="Search regions..." :options="exisitingRegions" multiple placeholder="Select regions" value-attribute="id" option-attribute="name"/>
-            </UFormGroup>
-            
-            <UButton :loading="loading" type="submit" color="black">
-              {{ loading ? 'Please wait...' : 'Add State' }}
-            </UButton>
-          </UForm>
+          <div v-if="item.key === 'state'">
+            <CreateState />
+          </div>
 
           <UForm v-if="item.key === 'region'" :state="region" :validate="validateRegion" @submit="submitRegion" class="space-y-3">
             <UFormGroup label="Name" name="name">
@@ -84,7 +75,7 @@ definePageMeta({
 import { collection, getDocs,doc, setDoc } from 'firebase/firestore'
 import { uuid } from 'vue-uuid';
 
-const db = useFirestore()
+const db = useFirestore();
 const toast = useToast();
 fetchItems();
 
