@@ -19,7 +19,7 @@
     <USlideover v-model="isEditOpen">
       <div class="px-4 py-8 border-b border-b-gray-500 flex items-center justify-between">
         <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-          Editing - {{ editing.name }}
+          Editing Region - {{ editing.name }}
         </h3>
         <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isEditOpen = false" />
       </div>
