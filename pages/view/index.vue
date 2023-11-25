@@ -18,7 +18,7 @@
           </template>
 
           <div v-if="item.key === 'state'" class="space-y-3">
-            
+            <ViewStates />
           </div>
 
           <div v-if="item.key === 'region'" class="space-y-3">
@@ -38,11 +38,6 @@
 definePageMeta({
   middleware: ['auth'],
 });
-
-import { collection, getDocs,doc, setDoc } from 'firebase/firestore'
-
-const db = useFirestore()
-const toast = useToast();
 
 const items = [ 
   {

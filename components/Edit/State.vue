@@ -1,16 +1,16 @@
 <template>
   <div>
     <p v-if="loading">Please wait...</p>
-    <UForm v-else :state="region" :validate="validateRegion" @submit="submitRegion" class="space-y-3">
+    <UForm v-else :state="state" :validate="validateState" @submit="submitState" class="space-y-3">
       <UFormGroup label="Name" name="name">
-        <UInput v-model="region.name" />
+        <UInput v-model="state.name" />
       </UFormGroup>
-      <UFormGroup label="Centres" name="centres">
-        <USelectMenu v-model="region.centres" searchable searchable-placeholder="Search centres..."  :options="exisitingCentres" multiple placeholder="Select centres" value-attribute="id" option-attribute="name"/>
+      <UFormGroup label="Regions" name="regions">
+        <USelectMenu v-model="state.regions" searchable searchable-placeholder="Search regions..."  :options="exisitingRegions" multiple placeholder="Select regions" value-attribute="id" option-attribute="name"/>
       </UFormGroup>
       
       <UButton :loading="loading" type="submit" color="black">
-        Update Region
+        Update State
       </UButton>
     </UForm>
   </div>
@@ -23,28 +23,28 @@ const emit = defineEmits(['close']);
 import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore'
 
 const db = useFirestore();
-let region = reactive({})
+let state = reactive({})
 let loading = ref(false);
 const toast = useToast();
 
-const exisitingCentres = ref([]);
-fetchExisitngCentres();
+const exisitingRegions = ref([]);
+fetchExisitngRegions();
 
 onMounted(async () => {
   loading.value = true
-  await getDoc(doc(db, 'locations', 'regions', 'region', props.id)).then((doc) => {
-    region = {id: doc.id, ...doc.data()};
+  await getDoc(doc(db, 'locations', 'states', 'state', props.id)).then((doc) => {
+    state = {id: doc.id, ...doc.data()};
   }).finally(() => {
     loading.value = false
   });
 })
 
-async function submitRegion() {
+async function submitState() {
   loading.value = true;
 
-  await setDoc(doc(db, "locations", "regions", 'region', region.id), region)
+  await setDoc(doc(db, "locations", "states", 'state', state.id), state)
   .then(() => {
-    toast.add({ title: 'Region updated successfully' })
+    toast.add({ title: 'State updated successfully' })
     emit('close')
   })
   .catch((error) => {
@@ -59,19 +59,19 @@ async function submitRegion() {
 }
 
 
-async function fetchExisitngCentres() {
-  const newExisitingCentres = [];
+async function fetchExisitngRegions() {
+  const newExisitingRegions = [];
 
-  const centresSnapshot = await getDocs(collection(db, 'locations', 'centres', 'centre'));
-  centresSnapshot.forEach((doc) => {
-    newExisitingCentres.push({ id: doc.id, name: doc.data().name });
+  const regionsSnapshot = await getDocs(collection(db, 'locations', 'regions', 'region'));
+  regionsSnapshot.forEach((doc) => {
+    newExisitingRegions.push({ id: doc.id, name: doc.data().name });
   });
 
-  exisitingCentres.value = newExisitingCentres;
+  exisitingRegions.value = newExisitingRegions;
 }
 
 
-function validateRegion() {
+function validateState() {
   const errors = [];
 
   function validateProperty(property, path) {
@@ -92,10 +92,10 @@ function validateRegion() {
     }
   }
 
-  for (const key in region) {
-    if (region.hasOwnProperty(key)) {
+  for (const key in state) {
+    if (state.hasOwnProperty(key)) {
       const propertyPath = key;
-      validateProperty(region[key], propertyPath);
+      validateProperty(state[key], propertyPath);
     }
   }
 
