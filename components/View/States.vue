@@ -34,6 +34,7 @@
 import { collection, getDocs} from 'firebase/firestore'
 
 const db = useFirestore();
+const { reverseEngineerID } = useViewUtilities();
 
 const states = ref([])
 const q = ref('')
@@ -96,16 +97,6 @@ async function fetchStates() {
 
   states.value = newStates;
   loading.value = false
-}
-
-function reverseEngineerID(generatedID) {
-  // Extract the name part by removing the UUID part and splitting by hyphens
-  const namePart = generatedID.replace(/-[\da-f]+$/, "").split("-");
-
-  // Capitalize each word in the name part
-  const formattedName = namePart.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-
-  return formattedName;
 }
 
 </script>
