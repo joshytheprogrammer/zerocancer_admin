@@ -2,9 +2,12 @@
   <div class="block my-8 mx-auto py-4 max-w-lg">
     <UContainer>
       <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
-      <p class="text-center" v-if="checkingAuthentication">
-        Authenticating...
-      </p>
+      <div v-if="checkingAuthentication">
+        <UProgress animation="carousel" />
+        <p class="text-center my-4">
+          Authenticating...
+        </p>
+      </div>
       <UForm v-else="!checkingAuthentication" :state="user" class="space-y-4" :validate="validate" @submit="onSubmit">
         <UFormGroup label="Email" name="email">
           <UInput v-model="user.email" />
