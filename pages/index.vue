@@ -12,6 +12,11 @@
           View Locations
         </UButton>
       </NuxtLink>
+      <NuxtLink class="block my-4" to="/view/">
+        <UButton @click="logout" block>
+          Logout
+        </UButton>
+      </NuxtLink>
     </UContainer>
   </div>
 </template>
@@ -21,4 +26,13 @@ definePageMeta({
   middleware: ['auth'],
 });
 
+import {
+  signOut,
+} from 'firebase/auth'
+
+const auth = useFirebaseAuth();
+
+async function logout() {
+  await signOut(auth)
+}
 </script>
