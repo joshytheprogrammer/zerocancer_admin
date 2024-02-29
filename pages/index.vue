@@ -2,21 +2,24 @@
   <div class="mx-auto my-8">
     <UContainer>
       <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
-      <NuxtLink to="/create/">
+      <NuxtLink class="block my-4" to="/create/envoy">
+        <UButton block>
+          Create Envoy
+        </UButton>
+      </NuxtLink>
+      <NuxtLink to="/create/location">
         <UButton block>
           Create Location
         </UButton>
       </NuxtLink>
-      <NuxtLink class="block my-4" to="/view/">
+      <NuxtLink class="block my-4" to="/view/location">
         <UButton block>
           View Locations
         </UButton>
       </NuxtLink>
-      <NuxtLink class="block my-4" to="/view/">
-        <UButton @click="logout" block>
-          Logout
-        </UButton>
-      </NuxtLink>
+      <UButton class="my-4" @click="logout" block>
+        Logout
+      </UButton>
     </UContainer>
   </div>
 </template>
