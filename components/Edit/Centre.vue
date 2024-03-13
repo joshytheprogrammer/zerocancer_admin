@@ -1,7 +1,7 @@
 <template>
   <div>
     <p v-if="loading">Please wait...</p>
-    <UForm v-else :state="centre" :validate="vItem" @submit="submitCentre" class="space-y-3">
+    <UForm v-else :state="centre" :validate="validate" @submit="submitCentre" class="space-y-3">
       <UFormGroup label="Name" name="name">
         <UInput v-model="centre.name" />
       </UFormGroup>
@@ -38,7 +38,6 @@ const emit = defineEmits(['close']);
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 const db = useFirestore();
-const {validate} = useCreateUtilities();
 let centre = reactive({})
 let loading = ref(false)
 const toast = useToast();
@@ -71,8 +70,41 @@ async function submitCentre() {
   });
 }
 
-function vItem() {
-  return validate(centre)
+function validate(state) {
+  const errors = [];
+
+  // Rule 1: No field can be left empty
+  if (!state.name) errors.push({ path: 'name', message: 'Name is required' });
+  if (!state.managerName) errors.push({ path: 'managerName', message: 'Manager name is required' });
+  if (!state.phone) errors.push({ path: 'phone', message: 'Phone number is required' });
+  if (!state.services) errors.push({ path: 'services', message: 'Services are required' });
+  if (!state.address) errors.push({ path: 'address', message: 'Address is required' });
+  if (!state.mapsLink) errors.push({ path: 'mapsLink', message: 'Map link is required' });
+  if (!state.formLink) errors.push({ path: 'formLink', message: 'Form link is required' });
+
+  // Rule 2: Make sure the phoneNumber is a Nigerian phone number. Use regex
+  const phoneNumbers = centre.phone.split(',').map(num => num.trim());
+  const nigerianPhoneRegex = /^((\+)?(234)|0)(7|8|9)(0|1)\d{8}$/;
+
+  phoneNumbers.forEach(phone => {
+    if (!nigerianPhoneRegex.test(phone)) {
+      errors.push({ path: 'phone', message: 'Invalid Nigerian phone number' });
+    }
+  });
+  
+  // Rule 3: Make sure the link to maps fits all possible maps format but not anything else.
+  const googleMapsRegex = /^https:\/\/(www\.)?(maps|www)\.(google\.com|app\.goo\.gl)\/.*/;
+  if (!googleMapsRegex.test(state.mapsLink)) {
+    errors.push({ path: 'mapsLink', message: 'Invalid map link format' });
+  }
+
+  // Rule 4: Link to form must fit all possible google form format but nothing else.
+  const googleFormRegex = /^https:\/\/(docs\.google\.com\/forms|forms\.gle)\/.*/;
+  if (!googleFormRegex.test(state.formLink)) {
+    errors.push({ path: 'formLink', message: 'Invalid form link format' });
+  }
+
+  return errors;
 }
 
 </script>
