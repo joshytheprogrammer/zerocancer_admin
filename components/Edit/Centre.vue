@@ -12,7 +12,7 @@
         <UInput v-model="centre.phone" />
       </UFormGroup>
       <UFormGroup label="Services" name="services">
-        <USelectMenu v-model="centre.services" :options="['Selling only', 'Screening only', 'Screening and treatment', 'Screening, diagnosis and treatment']" />
+        <USelectMenu v-model="centre.services" :options="['Selling only', 'Screening only', 'Screening and treatment', 'Screening, diagnosis and treatment', 'Selling, screening, diagnosis and treatment']" />
       </UFormGroup>
       <UFormGroup label="Address" name="address">
         <UInput v-model="centre.address" />
@@ -93,8 +93,8 @@ function validate(state) {
   });
   
   // Rule 3: Make sure the link to maps fits all possible maps format but not anything else.
-  const googleMapsRegex = /^https:\/\/(www\.)?(maps|www)\.(google\.com|app\.goo\.gl)\/.*/;
-  if (!googleMapsRegex.test(state.mapsLink)) {
+  const googleMapsRegex = /^(https:\/\/maps\.google\.com\/|https:\/\/maps\.app\.goo\.gl\/|https:\/\/goo\.gl\/maps\/)/;
+  if (!googleMapsRegex.test(centre.mapsLink)) {
     errors.push({ path: 'mapsLink', message: 'Invalid map link format' });
   }
 
