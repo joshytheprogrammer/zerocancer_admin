@@ -6,6 +6,7 @@
 
     <UTable :loading="loading" :rows="filteredRows" :columns="columns">
       <template #actions-data="{ row }">
+        
         <UDropdown :items="items(row)">
           <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
         </UDropdown>

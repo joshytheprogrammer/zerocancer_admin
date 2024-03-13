@@ -10,7 +10,7 @@
       <UInput v-model="centre.phone" />
     </UFormGroup>
     <UFormGroup label="Services" name="services">
-      <USelectMenu v-model="centre.services" :options="['Screening only', 'Treatment', 'Screening + Diagnosis and Treatment', ]" />
+      <USelectMenu v-model="centre.services" :options="['Selling only', 'Screening only', 'Screening and treatment', 'Screening, diagnosis and treatment']" />
     </UFormGroup>
     <UFormGroup label="Address" name="address">
       <UInput v-model="centre.address" />
@@ -41,7 +41,7 @@ const centre = reactive({
   phone: '',
   services: '',
   mapsLink: '',
-  formLink: '',
+  formLink: 'https://forms.gle/mRmvxw791LnCm3hF9',
   address: '',
 });
 
