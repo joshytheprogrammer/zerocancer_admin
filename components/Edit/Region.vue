@@ -6,7 +6,7 @@
         <UInput v-model="region.name" />
       </UFormGroup>
       <UFormGroup label="Centres" name="centres">
-        <USelectMenu v-model="region.centres" searchable searchable-placeholder="Search centres..."  :options="exisitingCentres" multiple placeholder="Select centres" value-attribute="id" option-attribute="name"/>
+        <USelectMenu v-model="region.centres" searchable searchable-placeholder="Search centres..." :options="exisitingCentres" multiple placeholder="Select centres" value-attribute="id" option-attribute="name"/>
       </UFormGroup>
       
       <UButton :loading="loading" type="submit" color="black">

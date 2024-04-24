@@ -1,10 +1,5 @@
 <template>
   <div class="mx-auto my-8">
-    <UContainer>
-      <NuxtLink class="mx-auto w-fit block" to="/">
-        <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
-      </NuxtLink>
-    </UContainer>
     <UCard>
       <template #header>
         <p class="text-base font-semibold leading-6 text-gray-900 dark:text-white">

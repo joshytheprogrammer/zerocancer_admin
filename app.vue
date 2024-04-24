@@ -16,6 +16,7 @@
           <div class="w-8 h-8" />
         </template>
       </ClientOnly>
+      <AppNav />
       <NuxtPage />
     </UContainer>
     <UNotifications />

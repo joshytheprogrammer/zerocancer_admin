@@ -23,17 +23,17 @@
       </template>
     </UTable>
 
-    <!-- <USlideover v-model="isEditOpen">
+    <USlideover v-model="isViewOpen">
       <div class="px-4 py-8 border-b border-b-gray-500 flex items-center justify-between">
         <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-          Editing State - {{ editing.name }}
+          Viewing Donation From {{ viewing.name }}
         </h3>
-        <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isEditOpen = false" />
+        <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isViewOpen = false" />
       </div>
       <div class="p-4 ">
-        <EditState @close="toggleEdit" :id="editing.id" />
+        <ViewDonation @close="toggleView" :id="viewing.id" />
       </div>
-    </USlideover> -->
+    </USlideover>
   </div>
 </template>
 
@@ -42,13 +42,12 @@
 import { collection, getDocs} from 'firebase/firestore'
 
 const db = useFirestore();
-const { reverseEngineerID } = useViewUtilities();
 
 const donations = ref([])
 const q = ref('')
 let loading = ref(false)
-let isEditOpen = ref(false)
-let editing = reactive({})
+let isViewOpen = ref(false)
+let viewing = reactive({})
 
 fetchDonations()
 
@@ -57,7 +56,7 @@ const items = (row) => [
     {
       label: 'View',
       icon: 'i-mdi-eye',
-      click: () => toggleEdit(row.id, row.name)
+      click: () => toggleView(row.id, row.fullName)
     },
   ]
 ]
@@ -99,10 +98,10 @@ const filteredRows = computed(() => {
   })
 });
 
-async function toggleEdit(id, name) {
-  isEditOpen.value = !isEditOpen.value
-  editing = {id: id, name: name}
-  if(!isEditOpen.value){await fetchDonations();}
+async function toggleView(id, name) {
+  isViewOpen.value = !isViewOpen.value
+  viewing = {id: id, name: name}
+  if(!isViewOpen.value){await fetchDonations();}
 }
 
 async function fetchDonations() {

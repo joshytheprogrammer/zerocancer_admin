@@ -1,11 +1,6 @@
 <template>
    <!-- -->
   <UForm :validate="vItem" :state="envoy" @submit="submitEnvoy" class="space-y-3">
-    <UContainer>
-      <NuxtLink class="mx-auto w-fit block" to="/">
-        <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
-      </NuxtLink>
-    </UContainer>
     <UFormGroup label="Name" name="fullName">
       <UInput v-model="envoy.fullName" placeholder="Enter the Full Name of the envoy" />
     </UFormGroup>
