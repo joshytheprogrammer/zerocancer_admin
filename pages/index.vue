@@ -7,14 +7,24 @@
           Create Envoy
         </UButton>
       </NuxtLink>
-      <NuxtLink to="/create/location">
+      <NuxtLink class="block my-4" to="/create/location">
         <UButton block>
           Create Location
+        </UButton>
+      </NuxtLink>
+      <NuxtLink class="block my-4" to="/create/cause">
+        <UButton block>
+          Create Cause
         </UButton>
       </NuxtLink>
       <NuxtLink class="block my-4" to="/view/location">
         <UButton block>
           View Locations
+        </UButton>
+      </NuxtLink>
+      <NuxtLink class="block my-4" to="/view/donations">
+        <UButton block>
+          View Donations
         </UButton>
       </NuxtLink>
       <UButton class="my-4" @click="logout" block>
