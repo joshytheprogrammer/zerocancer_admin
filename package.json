@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@egoist/tailwindcss-icons": "^1.7.4",
     "@nuxt/devtools": "latest",
     "nuxt": "^3.8.2",
     "vue": "^3.3.8",
