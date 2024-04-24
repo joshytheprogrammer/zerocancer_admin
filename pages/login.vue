@@ -1,7 +1,6 @@
 <template>
   <div class="block my-8 mx-auto py-4 max-w-lg">
     <UContainer>
-      <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
       <div v-if="checkingAuthentication">
         <UProgress animation="carousel" />
         <p class="text-center my-4">
@@ -21,7 +20,7 @@
           Submit
         </UButton>
       </UForm>
-  </UContainer>
+    </UContainer>
   </div>
 </template>
 
@@ -29,6 +28,10 @@
 import {
   signInWithEmailAndPassword,
 } from 'firebase/auth'
+
+definePageMeta({
+  layout: false
+})
 
 const router = useRouter();
 const auth = useFirebaseAuth();

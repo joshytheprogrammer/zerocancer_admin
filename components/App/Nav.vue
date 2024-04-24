@@ -1,6 +1,8 @@
 <template>
   <div class="mx-auto my-8">
-    <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
+    <NuxtLink to="/">
+      <img class="w-36 pb-4 mx-auto" src="/logo.png" alt="Zero Cancer Logo">
+    </NuxtLink>
     <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800" />
   </div>
 </template>
@@ -36,6 +38,10 @@ const links = [{
 }, {
   label: 'View Location',
   to: '/view/location'
+}, {
+}, {
+  label: 'View Causes',
+  to: '/view/causes'
 }, {
   label: 'View Donations',
   to: '/view/donations'
